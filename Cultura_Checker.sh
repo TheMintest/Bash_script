@@ -20,12 +20,10 @@ do
          if [[ $PARENTFOLDER == *"/INSTAGRAM"* ]]
     then
         checkInstagramSize()
-    else
-      if [[ $PARENTFOLDER == *"/HD"* ]]
+      elif [[ $PARENTFOLDER == *"/HD"* ]]
       then
         checkHDsize()
-      else
-        if [[ $PARENTFOLDER == *"/CULTURA.COM"* ]]
+      elif [[ $PARENTFOLDER == *"/CULTURA.COM"* ]]
         then
           checkCultura.comSize()
         fi
@@ -38,7 +36,7 @@ do
      x=$((x+1))
 done
 
-checkParentFolder {
+checkParentFolder() {
     echo "Checking parent folder"
     PARENTFOLDER=`dirname "$entry"`
     echo "$PARENTFOLDER"
