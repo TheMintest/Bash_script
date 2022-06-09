@@ -3,7 +3,7 @@
 
 function askForFolder {
     echo "Veuillez glisser-déposer le dossier à valider et appuyer sur entrer"
-    read FOLDER
+    read -r FOLDER
     checkForFolder
 }
 
@@ -32,36 +32,36 @@ function checkForRequiredFolders {
         TUTO=false
     fi
     if [ $TUTO == true ] && [ $AMBIANCE == true ] ; then
-        echo "les dossiers sont bien présents"
+        echo "les dossiers requis sont bien présents"
         echo "Appuyer sur entrer pour continuer"
-        read
+        read -r
     elif [ $TUTO == false ] && [ $AMBIANCE == true ] ; then 
         echo "Le dossier 'PHOTOS TUTO' est introuvable"
         echo "Appuyer sur entrer pour quitter"
-        read
+        read -r 
         exit
     elif [ $TUTO == true ] && [ $AMBIANCE == false ] ; then
         echo "Le dossier 'PHOTOS AMBIANCE' est introuvable"
         echo "Appuyer sur entrer pour quitter"
-        read
+        read -r 
         exit
     else
         echo "Les dossiers requis sont absent"
         echo "Appuyer sur entrer pour quitter"
-        read
+        read -r
         exit
     fi  
 }
 
 function verifyAmbianceFolder {
     echo "Vérification de la présence des dossiers HD et WEB"
-    echo $PWD
+    echo "$PWD"
     if [ -d "$PWD/HD" ] ; then
         echo "Le dossier HD est présent"
     else
         echo "Le dossier HD est absent"
         echo "Appuyer sur entrer pour quitter"
-        read
+        read -r
         exit
     fi
     if [ -d "$PWD/WEB" ] ; then
@@ -69,14 +69,21 @@ function verifyAmbianceFolder {
     else
         echo "Le dossier WEB est absent"
         echo "Appuyer sur entrer pour quitter"
-        read
+        read -r
         exit
     fi
 }
 
 function verifyAmbianceFolderContent {
-    for entry in $PWD
-    
+    currentFolder=$PWD
+    echo $currentFolder
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+       
+
+        fi
+    done
 }
 
 
@@ -88,20 +95,8 @@ cd "$FOLDER/PHOTOS AMBIANCE"
 verifyAmbianceFolder
 cd "$FOLDER/PHOTOS AMBIANCE/HD"
 verifyAmbianceFolderContent
+
+
+
 # cd "$FOLDER/PHOTOS TUTO"
 # verifyTutoFolder
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # echo $AMBIANCE
-# # echo $TUTO
