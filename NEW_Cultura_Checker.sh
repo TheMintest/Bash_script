@@ -76,18 +76,18 @@ function verifyAmbianceFolder {
 
 function verifyAmbianceFolderContent {
     currentFolder=$PWD
-    echo $currentFolder
+    echo "Dossier ouvert : $currentFolder"
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-
-        fi
+         echo "Fichier actuel : $(basename $entry)"
+         fi
     done
 }
 
 
 
-clean ;
+clear  ;
 askForFolder ;
 checkForRequiredFolders ;
 cd "$FOLDER/PHOTOS AMBIANCE" ;
