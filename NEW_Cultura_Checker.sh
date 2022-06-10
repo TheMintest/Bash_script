@@ -79,22 +79,60 @@ function verifyAmbianceFolderContent {
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-         echo "Vérification de $(basename "$entry") en cours"
+            echo "Vérification de $(basename "$entry") en cours"
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
-            echo "Nom du fichier : $name"
-        else
+            else
             echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
             echo "Appuyer sur ENTRER pour continuer"
-            read
+            read -r
         fi
-        # case $name in
-        #     carré)
-        # esac
+        echo $name
+        read -r
+        case $name in
+            carre)
+                getImageDimensions
+                echo "Largeur : $width"
+                echo "Hauteur : $height"
+                read -r
+                verifySquareDimensions
+                ;;
+            paysage)
+                verifyLandscapeDimensions
+                ;;
+            portrait)
+                verifyPortraitDimensions
+        esac
     done
 }
 
+getImageDimensions() {
+    HEIGHTFULL=$(sips -g pixelHeight "$entry")
+    HEIGHT=$(echo $HEIGHTFULL | cut -d ':' -f2) 
+    WIDTHFULL=$(sips -g pixelWidth "$entry")
+    WIDTH=$(echo $WIDTHFULL | cut -d ':' -f2)
+}
+
+verifySquareDimensions() {
+    echo "Vérification que l'image est un carré"
+    if [[ $HEIGHT == 3096 ]] || [[ $WIDTH == *.3096 ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+
+}
+
+verifyLandscapeDimensions() {
+    echo "Vérification que l'image est un paysage"    
+}
+
+verifyPortraitDimensions() {
+    echo "Vérification que l'image est un portrait"    
+}
 
 
 clear  ;
