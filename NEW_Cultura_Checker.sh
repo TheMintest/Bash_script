@@ -90,11 +90,13 @@ function verifyAmbianceFolderContent {
         fi
         echo $name
         read -r
+        HEIGHT=0
+        WIDTH=0
         case $name in
             carre)
                 getImageDimensions
-                echo "Largeur : $width"
-                echo "Hauteur : $height"
+                echo "Largeur : $WIDTH"
+                echo "Hauteur : $HEIGHT"
                 read -r
                 verifySquareDimensions
                 ;;
@@ -116,7 +118,7 @@ getImageDimensions() {
 
 verifySquareDimensions() {
     echo "Vérification que l'image est un carré"
-    if [[ $HEIGHT == 3096 ]] || [[ $WIDTH == *.3096 ]] ; then
+    if [[ "$HEIGHT" == "3096" ]] && [[ "$WIDTH" == "3096" ]] ; then
         echo "L'image $(basename "$entry") est valide"
     else
         echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
