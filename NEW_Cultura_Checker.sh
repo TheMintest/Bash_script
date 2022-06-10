@@ -84,10 +84,10 @@ function verifyAmbianceFolderContent {
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
             echo "Nom du fichier : $name"
-            read
         else
             echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
             echo "Appuyer sur ENTRER pour continuer"
+            read
         fi
         # case $name in
         #     carré)
