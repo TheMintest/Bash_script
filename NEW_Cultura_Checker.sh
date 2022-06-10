@@ -80,7 +80,6 @@ function verifyAmbianceFolderContent {
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-       
 
         fi
     done
@@ -88,13 +87,13 @@ function verifyAmbianceFolderContent {
 
 
 
-
-askForFolder
-checkForRequiredFolders
-cd "$FOLDER/PHOTOS AMBIANCE"
-verifyAmbianceFolder
-cd "$FOLDER/PHOTOS AMBIANCE/HD"
-verifyAmbianceFolderContent
+clean ;
+askForFolder ;
+checkForRequiredFolders ;
+cd "$FOLDER/PHOTOS AMBIANCE" ;
+verifyAmbianceFolder ;
+cd "$FOLDER/PHOTOS AMBIANCE/HD" ;
+verifyAmbianceFolderContent ;
 
 
 
