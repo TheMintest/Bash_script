@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 function askForFolder {
     echo "Veuillez glisser-déposer le dossier à valider et appuyer sur entrer"
     read -r FOLDER
@@ -80,8 +79,18 @@ function verifyAmbianceFolderContent {
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-         echo "Fichier actuel : $(basename $entry)"
-         fi
+         echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            echo "Nom du fichier : $name"
+        else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+        fi
+        # case $name in
+        #     carré)
+        # esac
     done
 }
 
