@@ -2,7 +2,8 @@
 
 function askForFolder {
     echo "Veuillez glisser-déposer le dossier à valider et appuyer sur entrer"
-    read -r FOLDER
+    # read -r FOLDER
+    FOLDER=/Users/guillaumedharcourt/Desktop/CULTURA
     checkForFolder
 }
 
@@ -17,7 +18,7 @@ function checkForFolder {
     fi
 }
 
-#Checking if the folder contains th required folders
+#Checking if the folder contains the required folders
 function checkForRequiredFolders {
     if [ -d "$FOLDER/PHOTOS AMBIANCE" ] ; then
         AMBIANCE=true
@@ -95,18 +96,25 @@ function verifyAmbianceFolderContent {
         case $name in
             carre)
                 getImageDimensions
-                echo "Largeur : $WIDTH"
-                echo "Hauteur : $HEIGHT"
-                read -r
                 verifySquareDimensions
                 ;;
             paysage)
+                getImageDimensions
                 verifyLandscapeDimensions
                 ;;
             portrait)
+                getImageDimensions
                 verifyPortraitDimensions
+                ;;
         esac
     done
+    if [ $VALIDLANDSCAPE == true ] && [ $VALIDPORTRAIT == true ] && [ $VALIDSQUARE == true ] ; then
+        echo "Le dossier $currentFolder est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier $currentFolder n'est pas valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    fi
 }
 
 getImageDimensions() {
@@ -118,10 +126,14 @@ getImageDimensions() {
 
 verifySquareDimensions() {
     echo "Vérification que l'image est un carré"
-    if [[ "$HEIGHT" == "3096" ]] && [[ "$WIDTH" == "3096" ]] ; then
+    if [[ "$HEIGHT" -eq "3096" ]] && [[ "$WIDTH" -eq "3096" ]] ; then
         echo "L'image $(basename "$entry") est valide"
+        VALIDSQUARE=true
     else
         echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Hauteur : $HEIGHT"
+        echo "Largeur : $WIDTH"
+        echo "Requis : 3096x3096"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
     fi
@@ -129,11 +141,34 @@ verifySquareDimensions() {
 }
 
 verifyLandscapeDimensions() {
-    echo "Vérification que l'image est un paysage"    
+    echo "Vérification que l'image est un paysage" 
+    if [[ "$HEIGHT" -eq "3629" ]] && [[ "$WIDTH" -eq "5443" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDLANDSCAPE=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Hauteur : $HEIGHT"
+        echo "Largeur : $WIDTH"
+        echo "Requis : 3629x5443"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
 }
 
 verifyPortraitDimensions() {
-    echo "Vérification que l'image est un portrait"    
+    echo "Vérification que l'image est un portrait"
+    if [[ "$HEIGHT" -eq "5568" ]] && [[ "$WIDTH" -eq "3712" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDPORTRAIT=true
+
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Hauteur : $HEIGHT"
+        echo "Largeur : $WIDTH"
+        echo "Requis : 3712x5568"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi    
 }
 
 
