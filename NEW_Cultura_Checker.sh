@@ -55,7 +55,6 @@ function checkForRequiredFolders {
 
 function verifyAmbianceFolder {
     echo "Vérification de la présence des dossiers HD et WEB"
-    echo "$PWD"
     if [ -d "$PWD/HD" ] ; then
         echo "Le dossier HD est présent"
     else
@@ -74,7 +73,7 @@ function verifyAmbianceFolder {
     fi
 }
 
-function verifyAmbianceFolderContent {
+function verifyAmbianceHDFolderContent {
     currentFolder=$PWD
     echo "Dossier ouvert : $currentFolder"
     for entry in "$currentFolder"/*
@@ -89,8 +88,6 @@ function verifyAmbianceFolderContent {
             echo "Appuyer sur ENTRER pour continuer"
             read -r
         fi
-        echo $name
-        read -r
         HEIGHT=0
         WIDTH=0
         case $name in
@@ -109,11 +106,12 @@ function verifyAmbianceFolderContent {
         esac
     done
     if [ $VALIDLANDSCAPE == true ] && [ $VALIDPORTRAIT == true ] && [ $VALIDSQUARE == true ] ; then
-        echo "Le dossier $currentFolder est valide"
+        echo "Le dossier Ambiance/HD est valide"
         echo "Appuyer sur ENTRER pour continuer"
     else
-        echo "Le dossier $currentFolder n'est pas valide"
+        echo "Le dossier Ambiance/HD n'est pas valide"
         echo "Appuyer sur ENTRER pour continuer"
+        read -r
     fi
 }
 
@@ -125,14 +123,12 @@ getImageDimensions() {
 }
 
 verifySquareDimensions() {
-    echo "Vérification que l'image est un carré"
-    if [[ "$HEIGHT" -eq "3096" ]] && [[ "$WIDTH" -eq "3096" ]] ; then
+    if  [[ "$WIDTH" -eq "3096" ]] && [[ "$HEIGHT" -eq "3096" ]]; then
         echo "L'image $(basename "$entry") est valide"
         VALIDSQUARE=true
     else
         echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echo "Hauteur : $HEIGHT"
-        echo "Largeur : $WIDTH"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
         echo "Requis : 3096x3096"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
@@ -141,36 +137,181 @@ verifySquareDimensions() {
 }
 
 verifyLandscapeDimensions() {
-    echo "Vérification que l'image est un paysage" 
     if [[ "$HEIGHT" -eq "3629" ]] && [[ "$WIDTH" -eq "5443" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDLANDSCAPE=true
     else
         echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echo "Hauteur : $HEIGHT"
-        echo "Largeur : $WIDTH"
-        echo "Requis : 3629x5443"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 5443x3629"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
     fi
 }
 
 verifyPortraitDimensions() {
-    echo "Vérification que l'image est un portrait"
     if [[ "$HEIGHT" -eq "5568" ]] && [[ "$WIDTH" -eq "3712" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDPORTRAIT=true
 
     else
         echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echo "Hauteur : $HEIGHT"
-        echo "Largeur : $WIDTH"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
         echo "Requis : 3712x5568"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
     fi    
 }
 
+verifyAmbianceWEBFolderContent() {
+    currentFolder=$PWD
+    echo "Dossier ouvert : $currentFolder"
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+            echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+            read -r
+        fi
+        HEIGHT=0
+        WIDTH=0
+        case $name in
+            carre)
+                getImageDimensions
+                verifySquare1080Dimensions
+                ;;
+            header)
+                getImageDimensions
+                verifyHeaderDimensions
+                ;;
+            paysage)
+                getImageDimensions
+                verifyLandscape1080Dimensions
+                ;;
+            portrait)
+                getImageDimensions
+                verifyPortrait720Dimensions
+                ;;
+            vignette)
+                getImageDimensions
+                verifyVignetteDimensions
+                ;;
+            instagram)
+                getImageDimensions
+                verifyInstagramDimensions
+                ;;
+            tuto)
+                getImageDimensions
+                verifyTutoDimensions
+                ;;
+        esac
+    done
+    if [ $VALIDSQUARE1080 == true ] && [ $VALIDHEADER == true ] && [ $VALIDLANDSCAPE1080 == true ] && [ $VALIDPORTRAIT720 == true ] && [ $VALIDSQUARE1080 == true ] ; then
+        echo "Le dossier Ambiance/WEB est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier Ambiance/WEB n'est pas valide"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+
+}
+
+verifySquare1080Dimensions() {
+    if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "1080" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDSQUARE1080=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 1080x1080"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyHeaderDimensions() {
+    if  [[ "$WIDTH" -eq "2000" ]] &&[[ "$HEIGHT" -eq "500" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDHEADER=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 2000x500"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyLandscape1080Dimensions() {
+    if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "720" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDLANDSCAPE1080=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 1080x720"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyPortrait720Dimensions() {
+    if  [[ "$WIDTH" -eq "720" ]] && [[ "$HEIGHT" -eq "1080" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDPORTRAIT720=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 720x1080"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyVignetteDimensions() {
+    if  [[ "$WIDTH" -eq "1027" ]]&& [[ "$HEIGHT" -eq "578" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDVIGNETTE=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 578x1027"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyInstagramDimensions() {
+    if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "1350" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDINSTAGRAM=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 1080x1350"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
+
+verifyTutoDimensions() {
+    if  [[ "$WIDTH" -eq "750" ]] && [[ "$HEIGHT" -eq "413" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+        VALIDTUTO=true
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 750x413"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+}
 
 clear  ;
 askForFolder ;
@@ -178,7 +319,9 @@ checkForRequiredFolders ;
 cd "$FOLDER/PHOTOS AMBIANCE" ;
 verifyAmbianceFolder ;
 cd "$FOLDER/PHOTOS AMBIANCE/HD" ;
-verifyAmbianceFolderContent ;
+verifyAmbianceHDFolderContent ;
+cd "$FOLDER/PHOTOS AMBIANCE/WEB" ;
+verifyAmbianceWEBFolderContent ;
 
 
 
