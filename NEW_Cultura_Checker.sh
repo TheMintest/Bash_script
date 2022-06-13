@@ -112,6 +112,7 @@ function verifyAmbianceHDFolderContent {
         echo "Le dossier Ambiance/HD n'est pas valide"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
     fi
 }
 
@@ -218,6 +219,7 @@ function verifyAmbianceWEBFolderContent {
         echo "Le dossier Ambiance/WEB n'est pas valide"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
     fi
 
 }
@@ -298,6 +300,7 @@ function verifyInstagramDimensions {
         echo "Requis : 1080x1350"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
+        WRONGDIMENSIONS=$((WRONGDIMENSIONS + 1))
     fi
 }
 
@@ -377,6 +380,7 @@ function verifyTutoCulturaFolderContent {
         echo "Il y a $WRONGDIMENSIONS images invalides"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
     fi
 
 }
@@ -394,9 +398,126 @@ function verifyCultura.comDimensions {
     fi
 }
 
+function verifyTutoHDFolderContent {
+    currentFolder=$PWD
+    echo "Dossier ouvert : $currentFolder"
+    WRONGDIMENSIONS=0
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+            echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+            read -r
+        fi
+        HEIGHT=0
+        WIDTH=0
+        
+        getImageDimensions
+        verifyHDDimensions
+    done
+    if [ $WRONGDIMENSIONS -eq 0 ] ; then
+        echo "Le dossier HD est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier HD n'est pas valide"
+        echo "Il y a $WRONGDIMENSIONS images invalides"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
+
+    fi
+}
+
+function verifyHDDimensions {
+    if  [[ "$WIDTH" -eq "5723" ]] && [[ "$HEIGHT" -eq "3167" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 5723x3167"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+        WRONGDIMENSIONS=$((WRONGDIMENSIONS + 1))
+    fi
+}
+
+function verifyTutoHDFolderContent {
+    currentFolder=$PWD
+    echo "Dossier ouvert : $currentFolder"
+    WRONGDIMENSIONS=0
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+            echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+            read -r
+        fi
+        HEIGHT=0
+        WIDTH=0
+        
+        getImageDimensions
+        verifyHDDimensions
+    done
+    if [ $WRONGDIMENSIONS -eq 0 ] ; then
+        echo "Le dossier HD est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier HD n'est pas valide"
+        echo "Il y a $WRONGDIMENSIONS images invalides"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
+    fi
+}
+
+function verifyTutoInstagramFolderContent {
+    currentFolder=$PWD
+    echo "Dossier ouvert : $currentFolder"
+    WRONGDIMENSIONS=0
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+            echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+            read -r
+        fi
+        HEIGHT=0
+        WIDTH=0
+        
+        getImageDimensions
+        verifyInstagramDimensions
+    done
+    if [ $WRONGDIMENSIONS -eq 0 ] ; then
+        echo "Le dossier INSTAGRAM est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier INSTAGRAM n'est pas valide"
+        echo "Il y a $WRONGDIMENSIONS images invalides"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+        INVALIDFOLDER=$((INVALIDFOLDER + 1))
+    fi
+}
+
 function main {
     clear  ;
     askForFolder ;
+    INVALIDFOLDER=0
     checkForRequiredFolders ;
     cd "$FOLDER/PHOTOS AMBIANCE" ;
     verifyAmbianceFolder ;
@@ -408,6 +529,18 @@ function main {
     verifyTutoFolder ;
     cd "$FOLDER/PHOTOS TUTO/CULTURA.COM" ;
     verifyTutoCulturaFolderContent ;
+    cd "$FOLDER/PHOTOS TUTO/HD" ;
+    verifyTutoHDFolderContent ;
+    cd "$FOLDER/PHOTOS TUTO/INSTAGRAM" ;
+    verifyTutoInstagramFolderContent ;
+    if [ "$INVALIDFOLDER" -eq 0 ] ; then
+        echo "Toutes les dossiers sont valides"
+    else
+        echo "Il y a $INVALIDFOLDER dossiers invalides"
+    fi
+    echo "Appuyer sur ENTRER pour quitter"
+    read -r
+    clear
 }
 
 main ;
