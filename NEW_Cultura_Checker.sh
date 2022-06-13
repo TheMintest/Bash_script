@@ -539,7 +539,10 @@ function verifyTutoInstagramFolderContent {
         verifyInstagramDimensions
     done
     if [ $WRONGDIMENSIONS -eq 0 ] ; then
-        echoGreen "Le dossier INSTAGRAM est valide"
+        echo " "
+        IGV=$(echoGreen "Le dossier INSTAGRAM est valide")
+        print_centered "$IGV"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     else
@@ -580,6 +583,7 @@ function main {
         INVALID=$(echoRed "Il y a $INVALIDFOLDER dossiers invalides")
         print_centered "$INVALID"
     fi
+    echo " "
     echolightbluebackground "Appuyer sur ENTRER pour quitter"
     read -r
     clear
