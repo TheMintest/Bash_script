@@ -51,7 +51,7 @@ function askForFolder {
 function checkForFolder {
     if [ -d "$FOLDER" ]
     then
-        echoGreen "Dossier localisé"
+       checkForRequiredFolders
     else
         echoRed "Impossible de détecter un dossier. Essayez de verifiez qu'il n'y a pas d'espaces dans le nom du dossier"
         echo $FOLDER
@@ -61,6 +61,7 @@ function checkForFolder {
 
 #Checking if the folder contains the required folders
 function checkForRequiredFolders {
+    echo " "
     if [ -d "$FOLDER/PHOTOS AMBIANCE" ] ; then
         AMBIANCE=true
     else
@@ -73,7 +74,9 @@ function checkForRequiredFolders {
         TUTO=false
     fi
     if [ $TUTO == true ] && [ $AMBIANCE == true ] ; then
-        echoGreen "Les dossiers requis sont bien présents"
+        VALID=$(echoGreen "Les dossiers requis sont bien présents")
+        print_centered "$VALID"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     elif [ $TUTO == false ] && [ $AMBIANCE == true ] ; then 
@@ -96,8 +99,10 @@ function checkForRequiredFolders {
 
 function verifyAmbianceFolder {
     echo "Vérification de la présence des dossiers HD et WEB"
+    echo " "
     if [ -d "$PWD/HD" ] ; then
-        echoGreen "Le dossier HD est présent"
+        HD=$(echoGreen "Le dossier HD est présent")
+        print_centered "$HD"
     else
         echoRed "Le dossier HD est absent"
         echolightbluebackground "Appuyer sur ENTRER pour quitter"
@@ -105,7 +110,9 @@ function verifyAmbianceFolder {
         exit
     fi
     if [ -d "$PWD/WEB" ] ; then
-        echoGreen "Le dossier WEB est présent"
+        WEB=$(echoGreen "Le dossier WEB est présent")
+        print_centered "$WEB"
+        echo " "
     else
         echoRed "Le dossier WEB est absent"
         echolightbluebackground "Appuyer sur ENTRER pour quitter"
@@ -144,11 +151,16 @@ function verifyAmbianceHDFolderContent {
         esac
     done
     if [ $VALIDLANDSCAPE == true ] && [ $VALIDPORTRAIT == true ] && [ $VALIDSQUARE == true ] ; then
-        echoGreen "Le dossier Ambiance/HD est valide"
+        echo " "
+        AHD=$(echoGreen "Le dossier Ambiance/HD est valide")
+        print_centered "$AHD"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     else
-        echoRed "Le dossier Ambiance/HD n'est pas valide"
+        AHD=$(echoRed "Le dossier Ambiance/HD n'est pas valide")
+        print_centered "$AHD"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
         INVALIDFOLDER=$((INVALIDFOLDER + 1))
@@ -250,11 +262,17 @@ function verifyAmbianceWEBFolderContent {
         esac
     done
     if [ $VALIDSQUARE1080 == true ] && [ $VALIDHEADER == true ] && [ $VALIDLANDSCAPE1080 == true ] && [ $VALIDPORTRAIT720 == true ] && [ $VALIDSQUARE1080 == true ] ; then
-        echoGreen "Le dossier Ambiance/WEB est valide"
+        echo " "
+        AWEB=$(echoGreen "Le dossier Ambiance/WEB est valide")
+        print_centered "$AWEB"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     else
-        echoRed "Le dossier Ambiance/WEB n'est pas valide"
+        echo " "
+        AWEB=$(echoGreen "Le dossier Ambiance/WEB n'est pas valide")
+        print_centered "$AWEB"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
         INVALIDFOLDER=$((INVALIDFOLDER + 1))
@@ -357,26 +375,34 @@ function verifyTutoDimensions {
 
 function verifyTutoFolder {
     echo "Vérification de la présence des dossiers CULTURA.COM, HD ET INSTAGRAM"
+    echo " "
     if [ -d "$PWD/HD" ] ; then
-        echoGreen "Le dossier HD est présent"
+        HD=$(echoGreen "Le dossier HD est présent")
+        print_centered "$HD"
     else
-        echoRed "Le dossier HD est absent"
+        HD=$(echoRed "Le dossier HD est absent")
+        print_centered "$HD"
         echolightbluebackground "Appuyer sur entrer pour quitter"
         read -r
         exit
     fi
     if [ -d "$PWD/INSTAGRAM" ] ; then
-        echoGreen "Le dossier INSTAGRAM est présent"
+        INSTA=$(echoGreen "Le dossier INSTAGRAM est présent")
+        print_centered "$INSTA"
     else
-        echoRed "Le dossier INSTAGRAM est absent"
+        INSTA=$(echoRed "Le dossier INSTAGRAM est absent")
+        print_centered "$INSTA"
         echolightbluebackground "Appuyer sur entrer pour quitter"
         read -r
         exit
     fi
         if [ -d "$PWD/CULTURA.COM" ] ; then
-        echoGreen "Le dossier CULTURA.COM est présent"
+        CULTU=$(echoGreen "Le dossier CULTURA.COM est présent")
+        print_centered "$CULTU"
+        echo " "
     else
-        echoRed "Le dossier CULTURA.COM est absent"
+        CULTU=$(echoRed "Le dossier CULTURA.COM est absent")
+        print_centered "$CULTU"
         echolightbluebackground "Appuyer sur entrer pour quitter"
         read -r
         exit
@@ -410,7 +436,10 @@ function verifyTutoCulturaFolderContent {
         fi
     done
     if [ $WRONGDIMENSIONS -eq 0 ] ; then
-        echoGreen "Le dossier CULTURA.COM est valide"
+        echo " "
+        CULTUVALID=$(echoGreen "Le dossier CULTURA.COM est valide")
+        print_centered "$CULTUVALID"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     else
@@ -457,11 +486,15 @@ function verifyTutoHDFolderContent {
         verifyHDDimensions
     done
     if [ $WRONGDIMENSIONS -eq 0 ] ; then
-        echoGreen "Le dossier HD est valide"
+        echo " "
+        HDV=$(echoGreen "Le dossier HD est valide")
+        print_centered "$HDV"
+        echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     else
-        echoRed "Le dossier HD n'est pas valide"
+        HDV=$(echoRed "Le dossier HD n'est pas valide")
+        print_centered "$HDV"
         echoRed "Il y a $WRONGDIMENSIONS images invalides"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -483,38 +516,7 @@ function verifyHDDimensions {
     fi
 }
 
-function verifyTutoHDFolderContent {
-    currentFolder=$PWD
-    WRONGDIMENSIONS=0
-    for entry in "$currentFolder"/*
-    do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-            name=$(basename "$entry")
-            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
-            name=$(echo "$name" | cut -d '.' -f1)
-            else
-            echoRed "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
-            echolightbluebackground "Appuyer sur ENTRER pour continuer"
-            read -r
-        fi
-        HEIGHT=0
-        WIDTH=0
-        
-        getImageDimensions
-        verifyHDDimensions
-    done
-    if [ $WRONGDIMENSIONS -eq 0 ] ; then
-        echoGreen "Le dossier HD est valide"
-        echolightbluebackground "Appuyer sur ENTRER pour continuer"
-        read -r
-    else
-        echoRed "Le dossier HD n'est pas valide"
-        echoRed "Il y a $WRONGDIMENSIONS images invalides"
-        echolightbluebackground "Appuyer sur ENTRER pour continuer"
-        read -r
-        INVALIDFOLDER=$((INVALIDFOLDER + 1))
-    fi
-}
+
 
 function verifyTutoInstagramFolderContent {
     currentFolder=$PWD
@@ -557,7 +559,6 @@ function main {
     echo " "
     askForFolder ;
     INVALIDFOLDER=0
-    checkForRequiredFolders ;
     cd "$FOLDER/PHOTOS AMBIANCE" ;
     verifyAmbianceFolder ;
     cd "$FOLDER/PHOTOS AMBIANCE/HD" ;
