@@ -3,7 +3,7 @@
 function askForFolder {
     echo "Veuillez glisser-déposer le dossier à valider et appuyer sur entrer"
     # read -r FOLDER
-    FOLDER=/Users/guillaumedharcourt/Desktop/CULTURA
+    FOLDER=/Users/muttedit/Desktop/CULTURA
     checkForFolder
 }
 
@@ -115,14 +115,14 @@ function verifyAmbianceHDFolderContent {
     fi
 }
 
-getImageDimensions() {
+function getImageDimensions {
     HEIGHTFULL=$(sips -g pixelHeight "$entry")
     HEIGHT=$(echo $HEIGHTFULL | cut -d ':' -f2) 
     WIDTHFULL=$(sips -g pixelWidth "$entry")
     WIDTH=$(echo $WIDTHFULL | cut -d ':' -f2)
 }
 
-verifySquareDimensions() {
+function verifySquareDimensions {
     if  [[ "$WIDTH" -eq "3096" ]] && [[ "$HEIGHT" -eq "3096" ]]; then
         echo "L'image $(basename "$entry") est valide"
         VALIDSQUARE=true
@@ -136,7 +136,7 @@ verifySquareDimensions() {
 
 }
 
-verifyLandscapeDimensions() {
+function verifyLandscapeDimensions {
     if [[ "$HEIGHT" -eq "3629" ]] && [[ "$WIDTH" -eq "5443" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDLANDSCAPE=true
@@ -149,7 +149,7 @@ verifyLandscapeDimensions() {
     fi
 }
 
-verifyPortraitDimensions() {
+function verifyPortraitDimensions {
     if [[ "$HEIGHT" -eq "5568" ]] && [[ "$WIDTH" -eq "3712" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDPORTRAIT=true
@@ -163,7 +163,7 @@ verifyPortraitDimensions() {
     fi    
 }
 
-verifyAmbianceWEBFolderContent() {
+function verifyAmbianceWEBFolderContent {
     currentFolder=$PWD
     echo "Dossier ouvert : $currentFolder"
     for entry in "$currentFolder"/*
@@ -222,7 +222,7 @@ verifyAmbianceWEBFolderContent() {
 
 }
 
-verifySquare1080Dimensions() {
+function verifySquare1080Dimensions {
     if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "1080" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDSQUARE1080=true
@@ -235,7 +235,7 @@ verifySquare1080Dimensions() {
     fi
 }
 
-verifyHeaderDimensions() {
+function verifyHeaderDimensions {
     if  [[ "$WIDTH" -eq "2000" ]] &&[[ "$HEIGHT" -eq "500" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDHEADER=true
@@ -248,7 +248,7 @@ verifyHeaderDimensions() {
     fi
 }
 
-verifyLandscape1080Dimensions() {
+function verifyLandscape1080Dimensions {
     if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "720" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDLANDSCAPE1080=true
@@ -261,7 +261,7 @@ verifyLandscape1080Dimensions() {
     fi
 }
 
-verifyPortrait720Dimensions() {
+function verifyPortrait720Dimensions {
     if  [[ "$WIDTH" -eq "720" ]] && [[ "$HEIGHT" -eq "1080" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDPORTRAIT720=true
@@ -274,7 +274,7 @@ verifyPortrait720Dimensions() {
     fi
 }
 
-verifyVignetteDimensions() {
+function verifyVignetteDimensions {
     if  [[ "$WIDTH" -eq "1027" ]]&& [[ "$HEIGHT" -eq "578" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDVIGNETTE=true
@@ -287,7 +287,7 @@ verifyVignetteDimensions() {
     fi
 }
 
-verifyInstagramDimensions() {
+function verifyInstagramDimensions {
     if  [[ "$WIDTH" -eq "1080" ]] && [[ "$HEIGHT" -eq "1350" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDINSTAGRAM=true
@@ -300,7 +300,7 @@ verifyInstagramDimensions() {
     fi
 }
 
-verifyTutoDimensions() {
+function verifyTutoDimensions {
     if  [[ "$WIDTH" -eq "750" ]] && [[ "$HEIGHT" -eq "413" ]] ; then
         echo "L'image $(basename "$entry") est valide"
         VALIDTUTO=true
@@ -313,17 +313,16 @@ verifyTutoDimensions() {
     fi
 }
 
-clear  ;
-askForFolder ;
-checkForRequiredFolders ;
-cd "$FOLDER/PHOTOS AMBIANCE" ;
-verifyAmbianceFolder ;
-cd "$FOLDER/PHOTOS AMBIANCE/HD" ;
-verifyAmbianceHDFolderContent ;
-cd "$FOLDER/PHOTOS AMBIANCE/WEB" ;
-verifyAmbianceWEBFolderContent ;
+function main {
+    clear  ;
+    askForFolder ;
+    checkForRequiredFolders ;
+    cd "$FOLDER/PHOTOS AMBIANCE" ;
+    verifyAmbianceFolder ;
+    cd "$FOLDER/PHOTOS AMBIANCE/HD" ;
+    verifyAmbianceHDFolderContent ;
+    cd "$FOLDER/PHOTOS AMBIANCE/WEB" ;
+    verifyAmbianceWEBFolderContent ;
+}
 
-
-
-# cd "$FOLDER/PHOTOS TUTO"
-# verifyTutoFolder
+main()
