@@ -245,6 +245,7 @@ function verifyHeaderDimensions {
         echo "Requis : 2000x500"
         echo "Appuyer sur ENTRER pour continuer"
         read -r
+        WRONGDIMENSIONS=$((WRONGDIMENSIONS + 1))
     fi
 }
 
@@ -341,6 +342,57 @@ function verifyTutoFolder {
     fi
 }
 
+function verifyTutoCulturaFolderContent {
+    currentFolder=$PWD
+    echo "Dossier ouvert : $currentFolder"
+    WRONGDIMENSIONS=0
+    for entry in "$currentFolder"/*
+    do
+        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+            echo "Vérification de $(basename "$entry") en cours"
+            name=$(basename "$entry")
+            name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
+            name=$(echo "$name" | cut -d '.' -f1)
+            else
+            echo "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
+            echo "Appuyer sur ENTRER pour continuer"
+            read -r
+        fi
+        HEIGHT=0
+        WIDTH=0
+        
+        if [ $name == "header" ] ; then
+            getImageDimensions
+            verifyHeaderDimensions
+       else 
+            getImageDimensions
+            verifyCultura.comDimensions
+        fi
+    done
+    if [ $WRONGDIMENSIONS -eq 0 ] ; then
+        echo "Le dossier CULTURA.COM est valide"
+        echo "Appuyer sur ENTRER pour continuer"
+    else
+        echo "Le dossier CULTURA.COM n'est pas valide"
+        echo "Il y a $WRONGDIMENSIONS images invalides"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+    fi
+
+}
+
+function verifyCultura.comDimensions {
+    if  [[ "$WIDTH" -eq "750" ]] && [[ "$HEIGHT" -eq "413" ]] ; then
+        echo "L'image $(basename "$entry") est valide"
+    else
+        echo "ERREUR ! L'image $(basename "$entry") n'est pas valide"
+        echo "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        echo "Requis : 750x413"
+        echo "Appuyer sur ENTRER pour continuer"
+        read -r
+        WRONGDIMENSIONS=$((WRONGDIMENSIONS + 1))
+    fi
+}
 
 function main {
     clear  ;
@@ -354,7 +406,8 @@ function main {
     verifyAmbianceWEBFolderContent ;
     cd "$FOLDER/PHOTOS TUTO" ;
     verifyTutoFolder ;
-
+    cd "$FOLDER/PHOTOS TUTO/CULTURA.COM" ;
+    verifyTutoCulturaFolderContent ;
 }
 
 main ;
