@@ -313,6 +313,35 @@ function verifyTutoDimensions {
     fi
 }
 
+function verifyTutoFolder {
+    echo "Vérification de la présence des dossiers CULTURA.COM, HD ET INSTAGRAM"
+    if [ -d "$PWD/HD" ] ; then
+        echo "Le dossier HD est présent"
+    else
+        echo "Le dossier HD est absent"
+        echo "Appuyer sur entrer pour quitter"
+        read -r
+        exit
+    fi
+    if [ -d "$PWD/INSTAGRAM" ] ; then
+        echo "Le dossier INSTAGRAM est présent"
+    else
+        echo "Le dossier INSTAGRAM est absent"
+        echo "Appuyer sur entrer pour quitter"
+        read -r
+        exit
+    fi
+        if [ -d "$PWD/CULTURA.COM" ] ; then
+        echo "Le dossier CULTURA.COM est présent"
+    else
+        echo "Le dossier CULTURA.COM est absent"
+        echo "Appuyer sur entrer pour quitter"
+        read -r
+        exit
+    fi
+}
+
+
 function main {
     clear  ;
     askForFolder ;
@@ -323,6 +352,9 @@ function main {
     verifyAmbianceHDFolderContent ;
     cd "$FOLDER/PHOTOS AMBIANCE/WEB" ;
     verifyAmbianceWEBFolderContent ;
+    cd "$FOLDER/PHOTOS TUTO" ;
+    verifyTutoFolder ;
+
 }
 
-main()
+main ;
