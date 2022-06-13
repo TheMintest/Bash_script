@@ -1,6 +1,30 @@
 #!/bin/bash
 
-#echo -e "\e[police;couleur_texte;couleur_fondm..."
+
+#echo a centerd text
+function print_centered {
+     [[ $# == 0 ]] && return 1
+
+     declare -i TERM_COLS="$(tput cols)"
+     declare -i str_len="${#1}"
+     [[ $str_len -ge $TERM_COLS ]] && {
+          echo "$1";
+          return 0;
+     }
+
+     declare -i filler_len="$(( (TERM_COLS - str_len) / 2 ))"
+     [[ $# -ge 2 ]] && ch="${2:0:1}" || ch=" "
+     filler=""
+     for (( i = 0; i < filler_len; i++ )); do
+          filler="${filler}${ch}"
+     done
+
+     printf "%s%s%s" "$filler" "$1" "$filler"
+     [[ $(( (TERM_COLS - str_len) % 2 )) -ne 0 ]] && printf "%s" "${ch}"
+     printf "\n"
+
+     return 0
+}
 
 #echo a green text
 function echoGreen {
@@ -27,9 +51,10 @@ function askForFolder {
 function checkForFolder {
     if [ -d "$FOLDER" ]
     then
-        echoGreen "Merci pour le dossier"
+        echoGreen "Dossier localisé"
     else
-        echoRed "Oupsi doupsi, tu n'as pas compris ? J'ai demandé un dossier. Tu peux recommencer ?"
+        echoRed "Impossible de détecter un dossier. Essayez de verifiez qu'il n'y a pas d'espaces dans le nom du dossier"
+        echo $FOLDER
         askForFolder
     fi
 }
@@ -49,21 +74,21 @@ function checkForRequiredFolders {
     fi
     if [ $TUTO == true ] && [ $AMBIANCE == true ] ; then
         echoGreen "Les dossiers requis sont bien présents"
-        echolightbluebackground "Appuyer sur entrer pour continuer"
+        echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     elif [ $TUTO == false ] && [ $AMBIANCE == true ] ; then 
         echoRed "Le dossier 'PHOTOS TUTO' est introuvable"
-        echolightbluebackground "Appuyer sur entrer pour quitter"
+        echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r 
         exit
     elif [ $TUTO == true ] && [ $AMBIANCE == false ] ; then
         echoRed "Le dossier 'PHOTOS AMBIANCE' est introuvable"
-        echolightbluebackground "Appuyer sur entrer pour quitter"
+        echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r 
         exit
     else
         echoRed "Les dossiers requis sont absent"
-        echolightbluebackground "Appuyer sur entrer pour quitter"
+        echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r
         exit
     fi  
@@ -75,7 +100,7 @@ function verifyAmbianceFolder {
         echoGreen "Le dossier HD est présent"
     else
         echoRed "Le dossier HD est absent"
-        echolightbluebackground "Appuyer sur entrer pour quitter"
+        echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r
         exit
     fi
@@ -83,7 +108,7 @@ function verifyAmbianceFolder {
         echoGreen "Le dossier WEB est présent"
     else
         echoRed "Le dossier WEB est absent"
-        echolightbluebackground "Appuyer sur entrer pour quitter"
+        echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r
         exit
     fi
@@ -94,13 +119,11 @@ function verifyAmbianceHDFolderContent {
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-            echo "Vérification de $(basename "$entry") en cours"
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
             else
             echoRed "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
-            echolightbluebackground "Appuyer sur ENTRER pour continuer"
             read -r
         fi
         HEIGHT=0
@@ -185,7 +208,6 @@ function verifyAmbianceWEBFolderContent {
     for entry in "$currentFolder"/*
     do
         if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
-            echo "Vérification de $(basename "$entry") en cours"
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
@@ -363,7 +385,6 @@ function verifyTutoFolder {
 
 function verifyTutoCulturaFolderContent {
     currentFolder=$PWD
-    echo "Dossier ouvert : $currentFolder"
     WRONGDIMENSIONS=0
     for entry in "$currentFolder"/*
     do
@@ -373,7 +394,8 @@ function verifyTutoCulturaFolderContent {
             name=$(echo "$name" | cut -d '.' -f1)
             else
             echoRed "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
-            echolightbluebackground "Appuyer sur ENTRER pour continuer"
+            echo " "
+            
             read -r
         fi
         HEIGHT=0
@@ -484,6 +506,7 @@ function verifyTutoHDFolderContent {
     if [ $WRONGDIMENSIONS -eq 0 ] ; then
         echoGreen "Le dossier HD est valide"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
+        read -r
     else
         echoRed "Le dossier HD n'est pas valide"
         echoRed "Il y a $WRONGDIMENSIONS images invalides"
@@ -528,6 +551,10 @@ function verifyTutoInstagramFolderContent {
 
 function main {
     clear  ;
+    print_centered "============================================"
+    print_centered "Cultura Checker V1.0 By Guillaume d'Harcourt" 
+    print_centered "============================================"
+    echo " "
     askForFolder ;
     INVALIDFOLDER=0
     checkForRequiredFolders ;
@@ -546,9 +573,11 @@ function main {
     cd "$FOLDER/PHOTOS TUTO/INSTAGRAM" ;
     verifyTutoInstagramFolderContent ;
     if [ "$INVALIDFOLDER" -eq 0 ] ; then
-        echoGreen "Toutes les dossiers sont valides"
+        VALID=$(echoGreen "Toutes les dossiers sont valides")
+        print_centered "$VALID"
     else
-        echoRed "Il y a $INVALIDFOLDER dossiers invalides"
+        INVALID=$(echoRed "Il y a $INVALIDFOLDER dossiers invalides")
+        print_centered "$INVALID"
     fi
     echolightbluebackground "Appuyer sur ENTRER pour quitter"
     read -r
