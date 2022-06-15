@@ -3,7 +3,7 @@
 
 #echo a centerd text
 function print_centered {
-     [[ $# == 0 ]] && return 1
+     [[ $# = 0 ]] && return 1
 
      declare -i TERM_COLS="$(tput cols)"
      declare -i str_len="${#1}"
@@ -31,7 +31,7 @@ function echoGreen {
     echo -e "\033[32m$1\033[0m"
 }
 function echoRed {
-    echo -e "\033[31m$1\033[0m"
+    echo -e "\033[31m"$1"\033[0m"
 }
 
 function echolightbluebackground {
@@ -73,18 +73,18 @@ function checkForRequiredFolders {
     else
         TUTO=false
     fi
-    if [ $TUTO == true ] && [ $AMBIANCE == true ] ; then
+    if [ $TUTO = true ] && [ $AMBIANCE = true ] ; then
         VALID=$(echoGreen "Les dossiers requis sont bien présents")
         print_centered "$VALID"
         echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
-    elif [ $TUTO == false ] && [ $AMBIANCE == true ] ; then 
+    elif [ $TUTO = false ] && [ $AMBIANCE = true ] ; then 
         echoRed "Le dossier 'PHOTOS TUTO' est introuvable"
         echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r 
         exit
-    elif [ $TUTO == true ] && [ $AMBIANCE == false ] ; then
+    elif [ $TUTO = true ] && [ $AMBIANCE = false ] ; then
         echoRed "Le dossier 'PHOTOS AMBIANCE' est introuvable"
         echolightbluebackground "Appuyer sur ENTRER pour quitter"
         read -r 
@@ -125,7 +125,7 @@ function verifyAmbianceHDFolderContent {
     currentFolder=$PWD
     for entry in "$currentFolder"/*
     do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+        if [[ $entry = *.jpg ]] || [[ $entry = *.png ]] || [[ $entry = *.jpeg ]] || [[ $entry = *.tiff ]]  ; then
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
@@ -150,7 +150,7 @@ function verifyAmbianceHDFolderContent {
                 ;;
         esac
     done
-    if [ $VALIDLANDSCAPE == true ] && [ $VALIDPORTRAIT == true ] && [ $VALIDSQUARE == true ] ; then
+    if [ $VALIDLANDSCAPE = true ] && [ $VALIDPORTRAIT = true ] && [ $VALIDSQUARE = true ] ; then
         echo " "
         AHD=$(echoGreen "Le dossier Ambiance/HD est valide")
         print_centered "$AHD"
@@ -180,7 +180,8 @@ function verifySquareDimensions {
         VALIDSQUARE=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 3096x3096"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -190,11 +191,12 @@ function verifySquareDimensions {
 
 function verifyLandscapeDimensions {
     if [[ "$HEIGHT" -eq "3629" ]] && [[ "$WIDTH" -eq "5443" ]] ; then
-        echoGreen "L'image $(basename "$entry") est valide"
+        echoGreen "L'image $(basename "$entry") est valide"     
         VALIDLANDSCAPE=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"        
         echoRed "Requis : 5443x3629"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -208,7 +210,8 @@ function verifyPortraitDimensions {
 
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"       
         echoRed "Requis : 3712x5568"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -219,7 +222,7 @@ function verifyAmbianceWEBFolderContent {
     currentFolder=$PWD
     for entry in "$currentFolder"/*
     do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+        if [[ $entry = *.jpg ]] || [[ $entry = *.png ]] || [[ $entry = *.jpeg ]] || [[ $entry = *.tiff ]]  ; then
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
@@ -261,7 +264,7 @@ function verifyAmbianceWEBFolderContent {
                 ;;
         esac
     done
-    if [ $VALIDSQUARE1080 == true ] && [ $VALIDHEADER == true ] && [ $VALIDLANDSCAPE1080 == true ] && [ $VALIDPORTRAIT720 == true ] && [ $VALIDSQUARE1080 == true ] ; then
+    if [ "$VALIDSQUARE1080" = true ] && [ "$VALIDHEADER" = true ] && [ "$VALIDLANDSCAPE1080" = true ] && [ "$VALIDPORTRAIT720" = true ] && [ "$VALIDSQUARE1080" = true ] ; then
         echo " "
         AWEB=$(echoGreen "Le dossier Ambiance/WEB est valide")
         print_centered "$AWEB"
@@ -270,7 +273,7 @@ function verifyAmbianceWEBFolderContent {
         read -r
     else
         echo " "
-        AWEB=$(echoGreen "Le dossier Ambiance/WEB n'est pas valide")
+        AWEB=$(echoRed "Le dossier Ambiance/WEB n'est pas valide")
         print_centered "$AWEB"
         echo " "
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
@@ -286,7 +289,8 @@ function verifySquare1080Dimensions {
         VALIDSQUARE1080=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"       
         echoRed "Requis : 1080x1080"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -299,7 +303,8 @@ function verifyHeaderDimensions {
         VALIDHEADER=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 2000x500"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -313,7 +318,8 @@ function verifyLandscape1080Dimensions {
         VALIDLANDSCAPE1080=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"      
         echoRed "Requis : 1080x720"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -326,7 +332,8 @@ function verifyPortrait720Dimensions {
         VALIDPORTRAIT720=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 720x1080"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -339,8 +346,9 @@ function verifyVignetteDimensions {
         VALIDVIGNETTE=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
-        echoRed "Requis : 578x1027"
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"        
+        echoRed "Requis : 1027x578"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
     fi
@@ -352,7 +360,8 @@ function verifyInstagramDimensions {
         VALIDINSTAGRAM=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 1080x1350"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -366,7 +375,8 @@ function verifyTutoDimensions {
         VALIDTUTO=true
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 750x413"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -414,20 +424,21 @@ function verifyTutoCulturaFolderContent {
     WRONGDIMENSIONS=0
     for entry in "$currentFolder"/*
     do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+        if [[ $entry = *.jpg ]] || [[ $entry = *.png ]] || [[ $entry = *.jpeg ]] || [[ $entry = *.tiff ]]  ; then
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
             else
             echoRed "ERREUR ! Le fichier "$(basename "$entry")" n'est pas une image"
             echo " "
+            WRONGDIMENSIONS=$((WRONGDIMENSIONS + 1))
             
             read -r
         fi
         HEIGHT=0
         WIDTH=0
         
-        if [ $name == "header" ] ; then
+        if [ $name = "header" ] ; then
             getImageDimensions
             verifyHeaderDimensions
        else 
@@ -457,7 +468,8 @@ function verifyCultura.comDimensions {
         echoGreen "L'image $(basename "$entry") est valide"
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"
         echoRed "Requis : 750x413"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -470,7 +482,7 @@ function verifyTutoHDFolderContent {
     WRONGDIMENSIONS=0
     for entry in "$currentFolder"/*
     do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+        if [[ $entry = *.jpg ]] || [[ $entry = *.png ]] || [[ $entry = *.jpeg ]] || [[ $entry = *.tiff ]]  ; then
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
@@ -508,7 +520,8 @@ function verifyHDDimensions {
         echoGreen "L'image $(basename "$entry") est valide"
     else
         echoRed "ERREUR ! L'image $(basename "$entry") n'est pas valide"
-        echoRed "Dimension de l'image : "$WIDTH"x"$HEIGHT""
+        CURRENTDIMENSION="$WIDTH"x"$HEIGHT"
+        echoRed "Dimension de l'image : $CURRENTDIMENSION"    
         echoRed "Requis : 5723x3167"
         echolightbluebackground "Appuyer sur ENTRER pour continuer"
         read -r
@@ -523,7 +536,7 @@ function verifyTutoInstagramFolderContent {
     WRONGDIMENSIONS=0
     for entry in "$currentFolder"/*
     do
-        if [[ $entry == *.jpg ]] || [[ $entry == *.png ]] || [[ $entry == *.jpeg ]] || [[ $entry == *.tiff ]]  ; then
+        if [[ $entry = *.jpg ]] || [[ $entry = *.png ]] || [[ $entry = *.jpeg ]] || [[ $entry = *.tiff ]]  ; then
             name=$(basename "$entry")
             name=$(echo "$name" | rev | cut -d '-' -f1 | rev)
             name=$(echo "$name" | cut -d '.' -f1)
@@ -556,9 +569,9 @@ function verifyTutoInstagramFolderContent {
 
 function main {
     clear  ;
-    print_centered "============================================"
-    print_centered "Cultura Checker V1.0 By Guillaume d'Harcourt" 
-    print_centered "============================================"
+    print_centered "======================"
+    print_centered "Mutt's Cultura Tuto Checker V1.0 By Guillaume d'Harcourt" 
+    print_centered "======================"
     echo " "
     askForFolder ;
     INVALIDFOLDER=0
