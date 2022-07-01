@@ -41,6 +41,8 @@ function echolightbluebackground {
 function askForFolder {
     echolightbluebackground "Veuillez glisser-déposer le dossier à valider et appuyer sur entrer"
     read -r FOLDER
+    FOLDERCLEAN="${FOLDER}"
+    echo $FOLDERCLEAN
     # FOLDER=/Users/muttedit/Desktop/CULTURA
     checkForFolder
 }
